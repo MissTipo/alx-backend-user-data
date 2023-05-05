@@ -7,7 +7,7 @@ from uuid import uuid4
 class SessionAuth(Auth):
     """Inherits from Auth."""
     user_id_by_session_id = {}
-    def__init__(self):
+    def __init__(self):
         """Constructor."""
         super().__init__()
 
