@@ -4,7 +4,6 @@ from api.v1.views import app_views
 from models.user import User
 from flask import request, jsonify, abort
 from os import getenv
-from api.v1
 
 
 
