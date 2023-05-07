@@ -7,7 +7,7 @@ from os import getenv
 
 
 
-@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)request.form.get()
+@app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """POST /auth_session/login"""
     email = request.form.get('email')
