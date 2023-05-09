@@ -29,7 +29,7 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """Create user."""
         try:
-            user = User(email=email, hashed_password=hashed_password )
+            user = User(email=email, hashed_password=hashed_password)
             self._session.add(user)
             self._session.commit()
         except Exception:
@@ -55,4 +55,3 @@ class DB:
             setattr(user, key, value)
         self._session.commit()
         return None
-
