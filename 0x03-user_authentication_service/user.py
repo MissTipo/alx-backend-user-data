@@ -10,7 +10,7 @@ Base = declarative_base()
 
 
 class User(Base):
-    """Class User"""
+    """Class User."""
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -25,8 +25,8 @@ class User(Base):
             hashed_password: str,
             session_id: Optional[str],
             reset_token: Optional[str]):
-        """Instantiates User class."""
-        email = self.email
-        hashed_password = self.hashed_password
-        session_id = self.session_id
-        reset_token = self.reset_token
+        """Instantiate User class."""
+        self.email = email
+        self.hashed_password = hashed_password
+        self.session_id = session_id
+        self.reset_token = reset_token
