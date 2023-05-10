@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-"""DB module."""
+"""DB module
+"""
 from sqlalchemy import create_engine
-from sqlalchemy.exc import InvalidRequestError, NoResultFound
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from user import Base, User
+from user import User, Base
+from typing import Optional
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 
 class DB:
-    """DB class."""
+    """DB class
+    """
 
     def __init__(self) -> None:
-        """Initialize a new DB instance."""
+        """Initialize a new DB instance
+        """
         self._engine = create_engine("sqlite:///a.db")
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
@@ -20,21 +25,25 @@ class DB:
 
     @property
     def _session(self) -> Session:
-        """Memoized session object."""
+        """Memoized session object
+        """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Create user."""
-        user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
+        """Save the user to the database."""
+        new_user = User(email=email, hashed_password=hashed_password)
+        self._session.add(new_user)
         self._session.commit()
-        return user
+        return new_user
 
     def find_user_by(self, **kwargs) -> User:
-        """Find user by keyword argument."""
+        """
+        Takes in arbitrary keyword arguments and returns the first row
+        found in the users table as filtered by the method’s input arguments
+        """
         if not kwargs:
             raise InvalidRequestError
         user = self._session.query(User).filter_by(**kwargs).first()
@@ -43,11 +52,18 @@ class DB:
         return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
-        """Update user."""
-        user = self.find_user_by(id=user_id)
-        for key, value in kwargs.items():
-            if not hasattr(user, key):
-                raise ValueError
-            setattr(user, key, value)
-        self._session.commit()
+        """
+        Update the user’s attributes as passed in the method’s arguments
+        then commit changes to the database.
+        """
+        try:
+            user = self.find_user_by(id=user_id)
+            for key, value in kwargs.items():
+                if hasattr(user, key):
+                    setattr(user, key, value)
+                else:
+                    raise ValueError
+            self._session.commit()
+        except NoResultFound:
+            raise ValueError
         return None
